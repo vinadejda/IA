@@ -1,0 +1,37 @@
+// Copiar o arquivo iris.arff para a raiz do projeto
+// No projeto em bibliotecas acrescentar o arquivo weka.jar
+
+package ianoturno;
+
+import java.util.Arrays;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
+public class IANoturno {
+   
+    public static void main(String[] args) throws Exception{
+        DataSource arff = new DataSource("iris.arff");
+        Instances iris = arff.getDataSet();
+        iris.setClassIndex(4);
+        
+        int qtdeExemplos = iris.numInstances();
+        int qtdeAtributos = iris.numAttributes();
+        
+        double[][]matrizIris = new double[qtdeExemplos][qtdeAtributos];
+        System.out.println("EXEMPLOS DA BASE");
+        
+        for(int i=1; i< qtdeExemplos; i++){
+            matrizIris[i-1] = iris.get(i).toDoubleArray();
+            System.out.println("EXEMPLO(" +  1  + "):");
+            System.out.println(Arrays.toString(matrizIris[i-1]));
+        }
+        
+        Instance primeiro = iris.get(0);
+        double[] vetorTeste = primeiro.toDoubleArray();
+        System.out.println("EXEMPLOS TESTE");
+        System.out.println(Arrays.toString(vetorTeste));
+        
+    }
+    
+}
