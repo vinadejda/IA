@@ -1,9 +1,12 @@
 // Copiar o arquivo iris.arff para a raiz do projeto
 // No projeto em bibliotecas acrescentar o arquivo weka.jar
+// Objetivo: Sabe que tem e como implementar os algoritmos da biblioteca Weka
 
 package ianoturno;
 
 import java.util.Arrays;
+import weka.classifiers.lazy.IBk; // Euclidiana 
+import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -15,23 +18,75 @@ public class IANoturno {
         Instances iris = arff.getDataSet();
         iris.setClassIndex(4);
         
-        int qtdeExemplos = iris.numInstances();
+        int qtdeExemplos = iris.numInstances() -1;
         int qtdeAtributos = iris.numAttributes();
         
         double[][]matrizIris = new double[qtdeExemplos][qtdeAtributos];
         System.out.println("EXEMPLOS DA BASE");
         
-        for(int i=1; i< qtdeExemplos; i++){
+        for(int i=1; i<= qtdeExemplos; i++){
             matrizIris[i-1] = iris.get(i).toDoubleArray();
-            System.out.println("EXEMPLO(" +  1  + "):");
+            System.out.print("EXEMPLO(" +  i  + "):");
             System.out.println(Arrays.toString(matrizIris[i-1]));
         }
-        
+    
+        //Exercicio b)
         Instance primeiro = iris.get(0);
-        double[] vetorTeste = primeiro.toDoubleArray();
+        double[] vetorTeste = {5.1, 3.5,3.7, 1.8, -1};
         System.out.println("EXEMPLOS TESTE");
         System.out.println(Arrays.toString(vetorTeste));
+    
+    
+    //Exercicio c)
+    double classe = nn(matrizIris, vetorTeste);
+    System.out.println("Classe encontrada: " + classe);
+    
+    IBk nnWeka = new IBk();
+    
+    // Treinando o Classificador
+    
+    nnWeka.buildClassifier(iris);
+    
+    // Definindo um exemplo de teste
+    // - Definindo quantidade de atributos
+    Instance exemploTeste = new DenseInstance(5);
+    
+    // - Definindo valores como serão esses cinco atributos
+    exemploTeste.setDataset(iris);
+    
+    // - Definindo valores desses atributos
+    exemploTeste.setValue(0,5.1);
+    exemploTeste.setValue(1,3.5);
+    exemploTeste.setValue(2,3.7);
+    exemploTeste.setValue(3,1.8);
+    
+    // Encontrando a classe/grupo para o exemplo definido
+    
+    double classeWeka = nnWeka.classifyInstance(exemploTeste);
+    System.out.println("Classe Weka: " + classeWeka);
+    
+    } 
+        public static double getEuclidiana(double[] vet1, double[] vet2){
+            double dist = 0;
+            for(int i = 0; i< vet1.length; i++){
+                dist += Math.pow(vet1[i] -  vet2[i], 2);
+            }
+            dist = Math.sqrt(dist);
+             return dist;
+        }
         
-    }
+        public static double nn(double[][] conjunto, double[] exemplo){
+            double menor = -1;
+            int vizinho = -1;
+            for(int i = 0; i< conjunto.length; i++){
+            double dist = getEuclidiana(conjunto[i], exemplo);
+            if(dist < menor || vizinho == -1){
+                menor = dist;
+                vizinho = i;
+            }
+        }
+            int classIndex = exemplo.length -1;
+            return conjunto[vizinho][classIndex];
+        }
     
 }
